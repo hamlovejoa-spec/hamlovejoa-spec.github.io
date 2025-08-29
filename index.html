@@ -15,344 +15,114 @@
   <meta property="og:image" content="/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
 
-  <!-- Favicon (옵션) -->
   <link rel="icon" href="/favicon.ico" />
 
-  <!-- 기본 스타일: 접근성·반응형 최적화 -->
   <style>
-    /* CSS Reset (간략) */
     *, *::before, *::after { box-sizing: border-box; }
-    html:focus-within { scroll-behavior: smooth; }
     body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Helvetica, Arial, sans-serif; line-height: 1.5; color: var(--fg); background: var(--bg); }
-    img, picture { max-width: 100%; display: block; }
-    input, button, textarea, select { font: inherit; }
+    img { max-width: 100%; display: block; }
 
     :root {
-      --bg: #0b0c0f; /* 다크 기본 */
+      --bg: #0b0c0f;
       --fg: #e9eef3;
-      --muted: #a4adba;
-      --surface: #12141a;
       --card: #171a21;
-      --brand: #6ea8fe; /* 포인트 */
-      --ok: #6bd390; --warn: #f3c969; --err: #ff7a7a;
-      --ring: 2px solid color-mix(in oklab, var(--brand) 60%, white 0%);
+      --brand: #6ea8fe;
       --radius: 16px;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
     }
-    @media (prefers-color-scheme: light) {
-      :root { --bg:#fcfcfd; --fg:#12141a; --muted:#5a667a; --surface:#f3f5f8; --card:#ffffff; --brand:#2a64f6; --shadow:0 8px 24px rgba(0,0,0,.08); }
-    }
 
-    .container { width: min(1120px, 100% - 2rem); margin: 0 auto; }
-    .skip { position: absolute; left: -9999px; }
-    .skip:focus { left: 1rem; top: 1rem; background: var(--brand); color: #fff; padding: .5rem .75rem; border-radius: .5rem; }
+    header.site { position: sticky; top: 0; backdrop-filter: blur(10px); background: rgba(0,0,0,.5); }
+    .nav { display: flex; justify-content: space-between; padding: .75rem 1rem; }
+    nav a { color: inherit; margin: 0 .5rem; text-decoration: none; }
 
-    header.site { position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); background: color-mix(in oklab, var(--bg) 82%, transparent); border-bottom: 1px solid color-mix(in oklab, var(--fg) 10%, transparent); }
-    .nav { display: flex; align-items: center; justify-content: space-between; padding: .75rem 0; }
-    .brand { display: inline-flex; align-items: center; gap: .5rem; font-weight: 700; letter-spacing: .2px; }
-    .brand .dot { width: .65rem; height: .65rem; border-radius: 999px; background: var(--brand); box-shadow: 0 0 0 4px color-mix(in oklab, var(--brand) 25%, transparent); }
-    nav a { color: inherit; text-decoration: none; padding: .5rem .75rem; border-radius: .5rem; }
-    nav a:focus-visible, nav a:hover { outline: none; background: color-mix(in oklab, var(--brand) 22%, transparent); }
+    .hero { padding: 3rem 1rem; text-align: center; }
+    .hero h1 { font-size: 2.5rem; }
+    .hero img { margin: 1rem auto; border-radius: var(--radius); box-shadow: var(--shadow); max-height: 400px; object-fit: cover; }
 
-    .hero { padding: clamp(3rem, 6vw, 6rem) 0; }
-    .hero .grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 2rem; align-items: center; }
-    .eyebrow { color: var(--muted); font-weight: 600; letter-spacing: .12em; text-transform: uppercase; font-size: .85rem; }
-    h1 { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.15; margin: .5rem 0 1rem; }
-    .lead { font-size: 1.1rem; color: var(--muted); }
-    .cta { display: flex; gap: .75rem; margin-top: 1.25rem; }
-    .btn { display: inline-flex; align-items: center; gap: .5rem; padding: .7rem 1rem; border-radius: .75rem; border: 1px solid color-mix(in oklab, var(--fg) 10%, transparent); background: var(--card); color: var(--fg); text-decoration: none; box-shadow: var(--shadow); }
-    .btn.primary { background: linear-gradient(135deg, color-mix(in oklab, var(--brand) 85%, black 0%), color-mix(in oklab, var(--brand) 55%, black 0%)); border: none; }
-    .btn:focus-visible { outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand) 40%, white 0%); }
-
-    .section { padding: clamp(2rem, 6vw, 4rem) 0; }
-
-    .chips { display: flex; flex-wrap: wrap; gap: .5rem; }
-    .chip { background: color-mix(in oklab, var(--brand) 18%, var(--card)); color: var(--fg); padding: .35rem .6rem; border-radius: 999px; font-size: .85rem; border: 1px solid color-mix(in oklab, var(--fg) 10%, transparent); }
-
-    .grid-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-    .card { background: var(--card); border: 1px solid color-mix(in oklab, var(--fg) 10%, transparent); border-radius: var(--radius); overflow: clip; box-shadow: var(--shadow); display: grid; grid-template-rows: auto 1fr auto; }
-    .card img { aspect-ratio: 16/9; object-fit: cover; background: #0a0a0a; }
-    .card .body { padding: 1rem; display: grid; gap: .6rem; }
-    .meta { color: var(--muted); font-size: .9rem; }
-    .tags { display: flex; flex-wrap: wrap; gap: .4rem; }
-    .tag { font-size: .8rem; padding: .25rem .5rem; border-radius: .5rem; background: color-mix(in oklab, var(--brand) 14%, var(--surface)); border: 1px solid color-mix(in oklab, var(--fg) 10%, transparent); }
-
-    .filterbar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: 1rem 0; }
-    .filterbar input[type="search"] { flex: 1 1 220px; padding: .6rem .8rem; border-radius: .6rem; border: 1px solid color-mix(in oklab, var(--fg) 15%, transparent); background: var(--surface); color: var(--fg); }
-    .filterbar .btn { padding: .5rem .75rem; }
-    .btn.ghost { background: transparent; border: 1px solid color-mix(in oklab, var(--fg) 14%, transparent); }
-    .btn.ghost[aria-pressed="true"] { background: color-mix(in oklab, var(--brand) 24%, transparent); border-color: color-mix(in oklab, var(--brand) 40%, transparent); }
-
-    .about-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 2rem; align-items: start; }
-    .about-grid .pane { background: var(--card); border: 1px solid color-mix(in oklab, var(--fg) 10%, transparent); border-radius: var(--radius); padding: 1rem; box-shadow: var(--shadow); }
-
-    .contact { display: grid; grid-template-columns: 1.1fr .9fr; gap: 2rem; }
-    form.contact { display: grid; gap: .75rem; }
-    .field { display: grid; gap: .35rem; }
-    .field input, .field textarea { width: 100%; padding: .7rem .8rem; border-radius: .6rem; border: 1px solid color-mix(in oklab, var(--fg) 15%, transparent); background: var(--surface); color: var(--fg); }
-    .hint { font-size: .85rem; color: var(--muted); }
-
-    footer { padding: 2rem 0; color: var(--muted); border-top: 1px solid color-mix(in oklab, var(--fg) 8%, transparent); }
-
-    .top { position: fixed; right: 1rem; bottom: 1rem; display: inline-flex; align-items: center; gap: .5rem; padding: .55rem .7rem; border-radius: .6rem; background: var(--card); border: 1px solid color-mix(in oklab, var(--fg) 10%, transparent); box-shadow: var(--shadow); text-decoration: none; color: var(--fg); }
-
-    @media (max-width: 960px) {
-      .hero .grid { grid-template-columns: 1fr; }
-      .grid-cards { grid-template-columns: repeat(2, 1fr); }
-      .about-grid, .contact { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 640px) {
-      .grid-cards { grid-template-columns: 1fr; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      * { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
-    }
+    .section { padding: 2rem 1rem; }
+    footer { padding: 2rem 1rem; text-align: center; color: #aaa; }
   </style>
 </head>
 <body>
-  <a class="skip" href="#main">본문으로 건너뛰기</a>
-
-  <header class="site" role="banner">
-    <div class="container nav" aria-label="Global">
-      <a class="brand" href="#home" aria-label="Home">
-        <span class="dot" aria-hidden="true"></span>
-        <span>YOUR_NAME</span>
-      </a>
+  <header class="site">
+    <div class="nav">
+      <div class="brand">YOUR_NAME</div>
       <nav>
         <a href="#home">Home</a>
         <a href="#about">About</a>
         <a href="#projects">Projects</a>
+        <a href="#gallery">Gallery</a>
         <a href="#contact">Contact</a>
-        <a href="/resume.pdf" aria-label="Download résumé">Resume</a>
       </nav>
     </div>
   </header>
 
   <main id="main">
-    <!-- Hero -->
-    <section id="home" class="hero container" aria-labelledby="h-hero">
-      <div class="grid">
-        <div>
-          <p id="h-hero" class="eyebrow">AI · Mobility · Web</p>
-          <h1>안녕하세요, 저는 <strong>YOUR_NAME</strong> 입니다.<br/>신뢰 가능한 제품을 만드는 엔지니어/메이커.</h1>
-          <p class="lead">문제 정의 → 데이터/시스템 설계 → 구현/운영까지의 End-to-End를 즐깁니다. 아래에서 대표 프로젝트를 확인해 보세요.</p>
-          <div class="cta">
-            <a class="btn primary" href="#projects">프로젝트 보기</a>
-            <a class="btn" href="#contact">연락하기</a>
-          </div>
-          <div class="chips" style="margin-top:1rem">
-            <span class="chip">Python</span>
-            <span class="chip">PyTorch</span>
-            <span class="chip">Control/Vehicle</span>
-            <span class="chip">JavaScript</span>
-            <span class="chip">HTML/CSS</span>
-          </div>
-        </div>
-        <div>
-          <img src="hero.jpg" alt="YOUR_NAME 작업 공간 또는 대표 이미지" loading="lazy" width="960" height="720" />
-        </div>
+    <!-- Hero with profile photo -->
+    <section id="home" class="hero">
+      <h1>안녕하세요, 저는 <strong>YOUR_NAME</strong> 입니다</h1>
+      <p>신뢰 가능한 제품을 만드는 엔지니어/메이커</p>
+      <!-- 메인 포트폴리오 사진 업로드 영역 -->
+      <div id="mainPhotoWrapper">
+        <img id="mainPhoto" src="123.png" alt="포트폴리오 대표 사진" />
+        <input type="file" id="mainPhotoInput" accept="image/*" hidden />
+        <button id="mainPhotoBtn">대표 사진 변경</button>
       </div>
     </section>
 
     <!-- About -->
-    <section id="about" class="section container" aria-labelledby="h-about">
-      <h2 id="h-about">About</h2>
-      <div class="about-grid" style="margin-top:1rem">
-        <div class="pane">
-          <h3>프로필</h3>
-          <p><strong>YOUR_NAME</strong> · 서울/아시아(Seoul, KST)</p>
-          <p>전문분야: RNN/LSTM, 제어/플랜트 모델, Virtual Validation(FMU/FMI), 프론트엔드/정적 웹</p>
-          <p>관심사: AI × Mobility, HIL/MIL/SIL, DX 도구, 교육</p>
-          <div class="chips" aria-label="Skills">
-            <span class="chip">C/C++</span><span class="chip">Python</span><span class="chip">JS</span><span class="chip">PyTorch</span><span class="chip">PlantUML</span>
-          </div>
-        </div>
-        <div class="pane">
-          <h3>경력 하이라이트</h3>
-          <ul>
-            <li>GM × Microsoft × AI Festival: 콘셉트/영상 프롬프트·행사 가사 제작</li>
-            <li>Virtual Validation: FMU/FMI 기반 Plant/Controller 구조 PoC</li>
-            <li>포트폴리오 템플릿: GitHub Pages 정적 사이트 설계/구현</li>
-          </ul>
-          <h3 style="margin-top:1rem">다운로드</h3>
-          <p><a class="btn" href="/resume.pdf">이력서 PDF</a></p>
-        </div>
-      </div>
+    <section id="about" class="section">
+      <h2>About</h2>
+      <p>여기에 자기소개와 경력 요약을 넣을 수 있습니다.</p>
     </section>
 
     <!-- Projects -->
-    <section id="projects" class="section container" aria-labelledby="h-projects">
-      <h2 id="h-projects">Projects</h2>
-      <div class="filterbar" role="toolbar" aria-label="프로젝트 필터">
-        <input id="q" type="search" placeholder="검색: 제목, 설명, 태그" aria-label="프로젝트 검색" />
-        <button class="btn ghost" data-filter="all" aria-pressed="true">All</button>
-        <button class="btn ghost" data-filter="ai">AI</button>
-        <button class="btn ghost" data-filter="mobility">Mobility</button>
-        <button class="btn ghost" data-filter="web">Web</button>
-      </div>
-      <div id="resultCount" class="hint" role="status" aria-live="polite">총 <span>0</span>개</div>
+    <section id="projects" class="section">
+      <h2>Projects</h2>
+      <p>프로젝트 카드/리스트 영역</p>
+    </section>
 
-      <div class="grid-cards" id="projectGrid">
-        <!-- 샘플 카드 1 -->
-        <article class="card" data-title="RNN 기반 시계열 예측" data-tags="ai" data-desc="PyTorch RNN/LSTM을 활용한 시계열 예측 모델">
-          <img src="projects/rnn.jpg" alt="RNN 프로젝트 썸네일" loading="lazy" width="1280" height="720" />
-          <div class="body">
-            <h3>RNN 기반 시계열 예측</h3>
-            <p class="meta">2024 · 역할: 모델 설계/학습 파이프라인</p>
-            <p>PyTorch로 RNN/LSTM 모델을 구현해 생산 데이터 예측 정확도를 12% 향상.</p>
-            <div class="tags"><span class="tag">AI</span><span class="tag">RNN/LSTM</span><span class="tag">PyTorch</span></div>
-          </div>
-          <div class="body">
-            <a class="btn" href="#" aria-label="프로젝트 데모">Demo</a>
-            <a class="btn" href="#" aria-label="깃허브 리포지터리">GitHub</a>
-          </div>
-        </article>
-
-        <!-- 샘플 카드 2 -->
-        <article class="card" data-title="FMU/FMI 기반 Vehicle Plant" data-tags="mobility ai" data-desc="Virtual Validation: Controller/Plant MIL/SIL/HIL">
-          <img src="projects/plant.jpg" alt="Vehicle Plant 모델 썸네일" loading="lazy" width="1280" height="720" />
-          <div class="body">
-            <h3>FMU/FMI 기반 Vehicle Plant</h3>
-            <p class="meta">2025 · 역할: 모델링/시뮬레이션</p>
-            <p>Controller FMU와 Vehicle Dynamics Plant를 결합해 ESC 제어 로직을 MIL→HIL로 검증.</p>
-            <div class="tags"><span class="tag">Mobility</span><span class="tag">FMU/FMI</span><span class="tag">Vehicle Dynamics</span></div>
-          </div>
-          <div class="body">
-            <a class="btn" href="#">Case Study</a>
-            <a class="btn" href="#">Docs</a>
-          </div>
-        </article>
-
-        <!-- 샘플 카드 3 -->
-        <article class="card" data-title="GitHub Pages 포트폴리오" data-tags="web" data-desc="정적 웹, 접근성/SEO 최적화 템플릿">
-          <img src="projects/web.jpg" alt="정적 웹 템플릿 썸네일" loading="lazy" width="1280" height="720" />
-          <div class="body">
-            <h3>GitHub Pages 포트폴리오</h3>
-            <p class="meta">2025 · 역할: 설계/구현</p>
-            <p>정적 사이트(HTML/CSS/JS)로 빠르고 안전하게 배포. WCAG·Lighthouse 90+ 달성.</p>
-            <div class="tags"><span class="tag">Web</span><span class="tag">SEO</span><span class="tag">A11y</span></div>
-          </div>
-          <div class="body">
-            <a class="btn" href="#">Live</a>
-            <a class="btn" href="#">Source</a>
-          </div>
-        </article>
-      </div>
+    <!-- Gallery -->
+    <section id="gallery" class="section">
+      <h2>Gallery</h2>
+      <p>포트폴리오 사진 모음</p>
     </section>
 
     <!-- Contact -->
-    <section id="contact" class="section container" aria-labelledby="h-contact">
-      <h2 id="h-contact">Contact</h2>
-      <div class="contact" style="margin-top:1rem">
-        <form class="contact" id="contactForm" method="post" action="#" aria-describedby="contactHint">
-          <div class="field">
-            <label for="name">이름</label>
-            <input id="name" name="name" type="text" required autocomplete="name" />
-          </div>
-          <div class="field">
-            <label for="email">이메일</label>
-            <input id="email" name="email" type="email" required autocomplete="email" />
-          </div>
-          <div class="field">
-            <label for="message">메시지</label>
-            <textarea id="message" name="message" rows="5" required></textarea>
-          </div>
-          <button class="btn primary" type="submit">보내기</button>
-          <p id="contactHint" class="hint">GitHub Pages는 정적 호스팅입니다. 서버리스 폼을 사용하지 않는 경우 아래 메일 링크를 이용하세요.</p>
-        </form>
-        <div>
-          <div class="pane" style="background:var(--card); padding:1rem; border-radius: var(--radius); border:1px solid color-mix(in oklab, var(--fg) 10%, transparent); box-shadow: var(--shadow);">
-            <h3>직접 메일</h3>
-            <p><a class="btn" href="mailto:you@example.com?subject=Portfolio%20Inquiry&body=안녕하세요%20YOUR_NAME님">you@example.com</a></p>
-            <h3 style="margin-top:1rem">소셜</h3>
-            <p class="chips">
-              <a class="chip" href="#" aria-label="GitHub">GitHub</a>
-              <a class="chip" href="#" aria-label="LinkedIn">LinkedIn</a>
-              <a class="chip" href="#" aria-label="X">X</a>
-            </p>
-            <h3 style="margin-top:1rem">서버리스 폼 사용 시</h3>
-            <p class="hint">Formspree/Getform/Formspark 등에서 제공하는 <code>action</code> URL로 폼의 <code>action</code> 값을 교체하세요.</p>
-          </div>
-        </div>
-      </div>
+    <section id="contact" class="section">
+      <h2>Contact</h2>
+      <p>이메일: you@example.com</p>
     </section>
   </main>
 
-  <footer role="contentinfo">
-    <div class="container">
-      <p>© <span id="year"></span> YOUR_NAME. All rights reserved.</p>
-    </div>
+  <footer>
+    <p>© <span id="year"></span> YOUR_NAME</p>
   </footer>
 
-  <a class="top" href="#home" aria-label="Back to top">↑ Top</a>
-
-  <noscript><div class="container" style="padding:1rem 0;color:var(--warn)">JavaScript가 비활성화되어 있어 일부 기능(검색/필터)이 제한됩니다.</div></noscript>
-
-  <!-- 스키마: Person / Website (SEO) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "YOUR_NAME",
-    "url": "https://username.github.io/",
-    "jobTitle": "Engineer",
-    "address": {"@type":"PostalAddress","addressCountry":"KR","addressLocality":"Seoul"},
-    "sameAs": ["https://github.com/username","https://www.linkedin.com/in/username/"]
-  }
-  </script>
-
-  <!-- 최소 JS: 프로젝트 필터/검색, 연도, 폼 핸들러(메일to fallback) -->
   <script>
-    // 현재 연도
+    // 연도 자동 표시
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // 프로젝트 필터 & 검색
-    const grid = document.getElementById('projectGrid');
-    const cards = Array.from(grid.querySelectorAll('.card'));
-    const count = document.querySelector('#resultCount span');
-    const search = document.getElementById('q');
-    const filterButtons = Array.from(document.querySelectorAll('[data-filter]'));
+    // 대표 사진 교체 기능 (localStorage 사용)
+    const photoInput = document.getElementById('mainPhotoInput');
+    const photoBtn = document.getElementById('mainPhotoBtn');
+    const photoImg = document.getElementById('mainPhoto');
+    const KEY = 'portfolioMainPhoto';
 
-    function applyFilter() {
-      const term = (search.value || '').toLowerCase().trim();
-      const active = filterButtons.find(b=>b.getAttribute('aria-pressed')==='true')?.dataset.filter || 'all';
-      let visible = 0;
-      cards.forEach(card => {
-        const title = card.dataset.title.toLowerCase();
-        const desc = card.dataset.desc.toLowerCase();
-        const tags = card.dataset.tags; // space-separated
-        const matchTerm = !term || title.includes(term) || desc.includes(term) || tags.includes(term);
-        const matchTag = active==='all' || tags.split(' ').includes(active);
-        const show = matchTerm && matchTag;
-        card.style.display = show ? 'grid' : 'none';
-        if (show) visible++;
-      });
-      count.textContent = visible;
-    }
+    // 저장된 이미지 불러오기
+    const saved = localStorage.getItem(KEY);
+    if (saved) photoImg.src = saved;
 
-    filterButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterButtons.forEach(b=>b.setAttribute('aria-pressed','false'));
-        btn.setAttribute('aria-pressed','true');
-        applyFilter();
-      });
-    });
-    search.addEventListener('input', applyFilter);
-    applyFilter();
-
-    // 연락 폼: 서버리스 엔드포인트 없으면 mailto로 fallback
-    const form = document.getElementById('contactForm');
-    form.addEventListener('submit', (e) => {
-      if (!form.action || form.action === '#') {
-        e.preventDefault();
-        const name = encodeURIComponent(form.name.value);
-        const email = encodeURIComponent(form.email.value);
-        const message = encodeURIComponent(form.message.value);
-        const subject = `Portfolio Inquiry from ${name}`;
-        const body = `from: ${decodeURIComponent(email)}%0D%0A%0D%0A${decodeURIComponent(message)}`;
-        window.location.href = `mailto:you@example.com?subject=${subject}&body=${body}`;
-      }
+    photoBtn.addEventListener('click', () => photoInput.click());
+    photoInput.addEventListener('change', () => {
+      const file = photoInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        localStorage.setItem(KEY, reader.result);
+        photoImg.src = reader.result;
+      };
+      reader.readAsDataURL(file);
     });
   </script>
 </body>
